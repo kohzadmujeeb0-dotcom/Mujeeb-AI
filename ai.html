@@ -1,0 +1,557 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mujeeb AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main Layout */
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            border-right: 1px solid #263244;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .logo span {
+            color: #3b82f6;
+        }
+
+        .new-chat {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            background: #1f2937;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .new-chat:hover {
+            background: #374151;
+        }
+
+        .side-title {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .side-item {
+            padding: 10px;
+            border-radius: 8px;
+            color: #d1d5db;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .side-item:hover {
+            background: #1f2937;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Header */
+        .header {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            border-bottom: 1px solid #263244;
+            background: #0f172a;
+        }
+
+        .ai-name {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .online {
+            margin-left: 10px;
+            color: #22c55e;
+            font-size: 12px;
+        }
+
+        /* Chat */
+        .chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 35px 20px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .welcome-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .welcome h1 {
+            font-size: 30px;
+            margin: 5px;
+        }
+
+        .welcome p {
+            color: #9ca3af;
+        }
+
+        .message-row {
+            display: flex;
+            margin-bottom: 22px;
+        }
+
+        .message-row.user-row {
+            justify-content: flex-end;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .user-row .avatar {
+            display: none;
+        }
+
+        .message {
+            max-width: 720px;
+            padding: 13px 17px;
+            border-radius: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .ai-message {
+            background: #1e293b;
+            border-top-left-radius: 5px;
+        }
+
+        .user-message {
+            background: #2563eb;
+            border-top-right-radius: 5px;
+        }
+
+        /* Input */
+        .input-area {
+            padding: 15px 25px 20px;
+            background: #0f172a;
+        }
+
+        .input-box {
+            max-width: 850px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            background: #1e293b;
+            border: 1px solid #374151;
+            border-radius: 15px;
+            padding: 6px;
+        }
+
+        .input-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: white;
+            padding: 13px;
+            font-size: 15px;
+        }
+
+        .input-box input::placeholder {
+            color: #6b7280;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 11px;
+            background: #2563eb;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .send-button:hover {
+            background: #1d4ed8;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: #6b7280;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .header {
+                padding: 0 15px;
+            }
+
+            .chat {
+                padding: 25px 12px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .input-area {
+                padding: 10px;
+            }
+
+            .welcome {
+                margin-top: 70px;
+            }
+
+            .welcome h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🤖 Mujeeb <span>AI</span>
+        </div>
+
+        <button class="new-chat" onclick="newChat()">
+            ＋ New Chat
+        </button>
+
+        <div class="side-title">
+            RECENT CHATS
+        </div>
+
+        <div id="history">
+        </div>
+
+        <div class="sidebar-bottom">
+            Mujeeb AI<br>
+            AI Assistant
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main">
+
+        <!-- Header -->
+        <header class="header">
+
+            <div class="ai-name">
+                Mujeeb AI
+            </div>
+
+            <div class="online">
+                ● Online
+            </div>
+
+        </header>
+
+
+        <!-- Chat -->
+        <div class="chat" id="chat">
+
+            <div class="welcome" id="welcome">
+
+                <div class="welcome-icon">
+                    🤖
+                </div>
+
+                <h1>
+                    How can I help you?
+                </h1>
+
+                <p>
+                    Ask me anything
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Input -->
+        <div class="input-area">
+
+            <div class="input-box">
+
+                <input
+                    type="text"
+                    id="message"
+                    placeholder="Message Mujeeb AI..."
+                    autocomplete="off"
+                >
+
+                <button
+                    class="send-button"
+                    onclick="sendMessage()"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+            <div class="footer-text">
+                Mujeeb AI can make mistakes. Check important information.
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+    const welcome = document.getElementById("welcome");
+    const history = document.getElementById("history");
+
+
+    // Send message
+    async function sendMessage() {
+
+        const text = input.value.trim();
+
+        if (!text) return;
+
+
+        // Remove welcome screen
+        if (welcome) {
+            welcome.remove();
+        }
+
+
+        // User message
+        const userRow = document.createElement("div");
+
+        userRow.className = "message-row user-row";
+
+        userRow.innerHTML = `
+            <div class="message user-message">
+                ${escapeHTML(text)}
+            </div>
+        `;
+
+        chat.appendChild(userRow);
+
+
+        // Clear input
+        input.value = "";
+
+
+        // AI thinking
+        const aiRow = document.createElement("div");
+
+        aiRow.className = "message-row";
+
+        aiRow.innerHTML = `
+            <div class="avatar">🤖</div>
+
+            <div class="message ai-message">
+                Mujeeb AI is thinking...
+            </div>
+        `;
+
+        chat.appendChild(aiRow);
+
+
+        chat.scrollTop = chat.scrollHeight;
+
+
+        try {
+
+            const response = await fetch(
+                "http://localhost:3000/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: text
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (data.answer) {
+
+                aiRow.querySelector(".ai-message").textContent =
+                    data.answer;
+
+            } else {
+
+                aiRow.querySelector(".ai-message").textContent =
+                    "Error: " + JSON.stringify(data.error);
+
+            }
+
+
+        } catch (error) {
+
+            aiRow.querySelector(".ai-message").textContent =
+                "Cannot connect to Mujeeb AI server.";
+
+        }
+
+
+        // Add to recent chats
+        addHistory(text);
+
+
+        chat.scrollTop = chat.scrollHeight;
+
+    }
+
+
+    // Enter to send
+    input.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            sendMessage();
+
+        }
+
+    });
+
+
+    // New chat
+    function newChat() {
+
+        chat.innerHTML = `
+            <div class="welcome" id="welcome">
+
+                <div class="welcome-icon">
+                    🤖
+                </div>
+
+                <h1>
+                    How can I help you?
+                </h1>
+
+                <p>
+                    Ask me anything
+                </p>
+
+            </div>
+        `;
+
+        input.focus();
+
+    }
+
+
+    // Recent chat
+    function addHistory(text) {
+
+        const item = document.createElement("div");
+
+        item.className = "side-item";
+
+        item.textContent =
+            text.length > 25
+                ? text.substring(0, 25) + "..."
+                : text;
+
+        history.prepend(item);
+
+    }
+
+
+    // Protect HTML
+    function escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+
+    }
+
+</script>
+
+</body>
+</html>
+```
